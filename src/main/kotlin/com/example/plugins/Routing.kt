@@ -57,7 +57,7 @@ fun Application.configureRouting(
 
             val user = userDataSource.getUserById(request.username)
             if (user == null){
-                call.respond(HttpStatusCode.Conflict)
+                call.respond(HttpStatusCode.Conflict,"inncorrect username and pass")
                 return@post
             }
 
@@ -87,6 +87,16 @@ fun Application.configureRouting(
                 )
             )
 
+        }
+
+        post("mongo") {
+            val request = call.receive<AuthRequest>()
+            val user = userDataSource.getUserById(request.username)
+            if (user == null){
+                call.respond(HttpStatusCode.Conflict,"inncorrect username and pass")
+                return@post
+            }
+            call.respond(HttpStatusCode.OK, user)
         }
 
         authentication {

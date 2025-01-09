@@ -11,7 +11,7 @@ class MongoUserDataSource(
 
     override suspend fun getUserById(username: String): User? {
         return users
-            .find(eq(username, User::username))
+            .find(eq(User::username, username))
             .firstOrNull()
     }
 

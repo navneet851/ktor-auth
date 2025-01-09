@@ -17,6 +17,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+
     val mongoPass = System.getenv("MONGO_PASS")
     val connectionString = "mongodb+srv://nav700neet:$mongoPass@cluster0.61nhg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
     val dbName = "ktor-auth"
