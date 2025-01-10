@@ -5,9 +5,7 @@ import com.example.data.responses.AuthResponse
 import com.example.data.user.User
 import com.example.data.user.UserDataSource
 import com.example.security.hashing.HashService
-import com.example.security.hashing.SHA256HashingService
 import com.example.security.hashing.SaltedHash
-import com.example.security.token.JwtTokenService
 import com.example.security.token.TokenClaim
 import com.example.security.token.TokenConfig
 import com.example.security.token.TokenService
@@ -18,6 +16,7 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.apache.commons.codec.digest.DigestUtils
 
 fun Application.configureRouting(
     hashingService: HashService,
@@ -34,7 +33,7 @@ fun Application.configureRouting(
             val blankFields = request.username.isBlank() || request.password.isBlank()
             val passLength = request.password.length < 8
             if(blankFields || passLength){
-                call.respond(HttpStatusCode.Conflict)
+                call.respond(HttpStatusCode.Conflict, "enter correct fields")
                 return@post
             }
             val saltedHash = hashingService.generateSaltedHash(request.password)
@@ -50,7 +49,7 @@ fun Application.configureRouting(
                 return@post
             }
 
-            call.respond(HttpStatusCode.OK)
+            call.respond(HttpStatusCode.OK, "successfully registered")
         }
         post("signin") {
             val request = call.receive<AuthRequest>()
@@ -96,16 +95,30 @@ fun Application.configureRouting(
                 call.respond(HttpStatusCode.Conflict,"user not found")
                 return@post
             }
+            val isValidPass = hashingService.verify(
+                value = request.password,
+                saltedHash = SaltedHash(
+                    hash = user.password,
+                    salt = user.salt
+                )
+            )
+            if (!isValidPass){
+                val decrypt = DigestUtils.sha256Hex("${user.salt}${request.password}")
+                call.respond(HttpStatusCode.ExpectationFailed, "${user.salt} + ${request.password} wrong password $decrypt")
+                return@post
+            }
+//            val decrypt = DigestUtils.sha256Hex("${user.salt}${request.password}")
+//            call.respond(HttpStatusCode.OK, decrypt)
             call.respond(HttpStatusCode.OK, user)
         }
 
-        authentication {
+        authenticate {
             get("authenticate") {
                 call.respond(HttpStatusCode.OK)
             }
         }
 
-        authentication {
+        authenticate {
             get("secret") {
                 val principal = call.principal<JWTPrincipal>()
                 val userId = principal?.getClaim("userId", String::class)
