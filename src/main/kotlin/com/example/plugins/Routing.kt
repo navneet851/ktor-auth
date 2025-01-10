@@ -57,7 +57,7 @@ fun Application.configureRouting(
 
             val user = userDataSource.getUserById(request.username)
             if (user == null){
-                call.respond(HttpStatusCode.Conflict,"inncorrect username and pass")
+                call.respond(HttpStatusCode.Conflict,"user not found")
                 return@post
             }
 
@@ -76,7 +76,7 @@ fun Application.configureRouting(
                 config = tokenConfig,
                 TokenClaim(
                     name = "userId",
-                    value = user.id.toString()
+                    value = user.id
                 )
             )
 
@@ -93,7 +93,7 @@ fun Application.configureRouting(
             val request = call.receive<AuthRequest>()
             val user = userDataSource.getUserById(request.username)
             if (user == null){
-                call.respond(HttpStatusCode.Conflict,"inncorrect username and pass")
+                call.respond(HttpStatusCode.Conflict,"user not found")
                 return@post
             }
             call.respond(HttpStatusCode.OK, user)
