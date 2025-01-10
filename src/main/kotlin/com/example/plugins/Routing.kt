@@ -45,7 +45,7 @@ fun Application.configureRouting(
 
             val wasAcknowledged = userDataSource.insertUser(user)
             if (!wasAcknowledged){
-                call.respond(HttpStatusCode.Conflict)
+                call.respond(HttpStatusCode.Conflict, "data not inserted in db")
                 return@post
             }
 
@@ -68,7 +68,7 @@ fun Application.configureRouting(
                 )
             )
             if (!isValidPass){
-                call.respond(HttpStatusCode.Conflict)
+                call.respond(HttpStatusCode.Conflict, "wrong password")
                 return@post
             }
             val token = tokenService.generate(
@@ -114,7 +114,7 @@ fun Application.configureRouting(
 
         authenticate {
             get("authenticate") {
-                call.respond(HttpStatusCode.OK)
+                call.respond(HttpStatusCode.OK, "successfully authenticated")
             }
         }
 
