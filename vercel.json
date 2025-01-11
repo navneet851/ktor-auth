@@ -1,15 +1,14 @@
 {
-  "version": 2,
   "builds": [
     {
-      "src": "build.sh",
-      "use": "@vercel/static-build"
+      "src": "build/classes/java/main",
+      "use": "@vercel/java"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/"
+      "dest": "/index"
     }
   ]
 }
