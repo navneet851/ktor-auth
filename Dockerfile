@@ -1,14 +1,10 @@
-# Stage 1: Build the application
-FROM gradle:7.5.1-jdk17 AS build
-WORKDIR /app
-COPY . .
-RUN gradle build --no-daemon
+FROM gradle:7-jdk11 AS build
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src
+RUN gradle buildFatJar --no-daemon
 
-# Stage 2: Create the final image
-FROM openjdk:17-jdk-slim
-WORKDIR /app
-COPY --from=build /app/build/libs/*.jar app.jar
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
-
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -f http://localhost:8080/ || exit 1
+FROM openjdk:11
+EXPOSE 8080:8080
+RUN mkdir /app
+COPY --from=build /home/gradle/src/build/libs/*.jar /app/test.jar
+ENTRYPOINT ["java", "-jar", "/app/test.jar"]
