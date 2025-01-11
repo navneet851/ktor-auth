@@ -9,4 +9,9 @@ FROM openjdk:17-jdk-slim
 EXPOSE 8080
 RUN mkdir /app
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/test.jar
+
+# Set environment variables
+ENV MONGO_PASS=navbarneet
+ENV JWT_PASS=navsecret
+
 ENTRYPOINT ["java", "-jar", "/app/test.jar"]
