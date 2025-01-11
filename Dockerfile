@@ -12,6 +12,6 @@ COPY --from=build /home/gradle/src/build/libs/*.jar /app/test.jar
 
 # Set environment variables
 ENV MONGO_PASS=navbarneet
-ENV JWT_PASS=navsecret
+ENV JWT_SECRET=navsecret
 
 ENTRYPOINT ["java", "-jar", "/app/test.jar"]
