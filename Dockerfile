@@ -1,17 +1,14 @@
-# Stage 1: Build the application
-FROM gradle:8.3-jdk17 AS build
-COPY --chown=gradle:gradle . /home/gradle/src
-WORKDIR /home/gradle/src
-RUN gradle buildFatJar --no-daemon
-
-# Stage 2: Create the final image
+# Use an official OpenJDK runtime as a parent image
 FROM openjdk:17-jdk-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the build output from the host to the container
+COPY build/libs/test.jar /app/test.jar
+
+# Expose the port your app runs on
 EXPOSE 8080
-RUN mkdir /app
-COPY --from=build /home/gradle/src/build/libs/*.jar /app/test.jar
 
-# Set environment variables
-ENV MONGO_PASS=navbarneet
-ENV JWT_SECRET=navsecret
-
-ENTRYPOINT ["java", "-jar", "/app/test.jar"]
+# Run the application
+CMD ["java", "-jar", "test.jar"]
