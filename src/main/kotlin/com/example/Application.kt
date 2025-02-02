@@ -25,7 +25,7 @@ fun Application.module() {
 
     val mongoPass = "navbarneet"
     val navSecret = "navsecret"
-    val connectionString = "mongodb+srv://nav700neet:$mongoPass@cluster0.61nhg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&ssl=false"
+    val connectionString = "mongodb+srv://nav700neet:$mongoPass@cluster0.61nhg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&ssl=true"
     val dbName = "ktor-auth"
 
     val client = MongoClient.create(connectionString)
