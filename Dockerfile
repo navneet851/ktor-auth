@@ -1,14 +1,12 @@
-# Use an official OpenJDK runtime as a parent image
+# Stage 1: Build the application
+FROM gradle:8.3-jdk17 AS build
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src
+RUN gradle build --no-daemon
+
+# Stage 2: Create the final image
 FROM openjdk:17-jdk-slim
-
-# Set the working directory
 WORKDIR /app
-
-# Copy the build output from the host to the container
-COPY build/libs/ktor.jar /app/ktor.jar
-
-# Expose the port your app runs on
+COPY --from=build /home/gradle/src/build/libs/*.jar /app/ktor.jar
 EXPOSE 8080
-
-# Run the application
 CMD ["java", "-jar", "ktor.jar"]
