@@ -5,10 +5,10 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the build output from the host to the container
-COPY build/libs/test.jar /app/test.jar
+COPY build/libs/test.jar /app/ktor.jar
 
 # Expose the port your app runs on
 EXPOSE 8080
 
 # Run the application
-CMD ["java", "-jar", "test.jar"]
+CMD ["java", "-jar", "ktor.jar"]

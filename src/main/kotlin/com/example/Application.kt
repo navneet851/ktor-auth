@@ -11,9 +11,14 @@ import com.example.security.token.JwtTokenService
 import com.example.security.token.TokenConfig
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import io.ktor.server.application.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
+        module()
+    }.start(wait = true)
 }
 
 fun Application.module() {
@@ -31,6 +36,7 @@ fun Application.module() {
         audience = environment.config.property("jwt.audience").getString(),
         expiresIn = 365L * 1000L * 60L * 60L * 24L,
         secret = navSecret
+
 
     )
 
